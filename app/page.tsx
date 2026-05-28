@@ -407,7 +407,7 @@ export default function Home() {
 
           <button
             onClick={loginWithGoogle}
-            className="mt-6 w-full rounded-xl bg-slate-800 p-3 font-bold text-white shadow hover:bg-slate-900"
+            className="mt-6 w-full cursor-pointer rounded-xl bg-slate-800 p-3 font-bold text-white shadow hover:bg-slate-900"
           >
             เข้าสู่ระบบด้วย Google
           </button>
@@ -475,7 +475,7 @@ export default function Home() {
 
               <button
                 onClick={logout}
-                className="rounded-lg bg-red-100 px-3 py-2 font-bold text-red-700 hover:bg-red-200"
+                className="cursor-pointer rounded-lg bg-red-100 px-3 py-2 font-bold text-red-700 hover:bg-red-200"
               >
                 ออกจากระบบ
               </button>
@@ -513,7 +513,7 @@ export default function Home() {
                         setSearch(person.full_name);
                         setMessage("");
                       }}
-                      className="block w-full border-b p-4 text-left hover:bg-slate-50"
+                      className="block w-full cursor-pointer border-b p-4 text-left hover:bg-slate-50"
                     >
                       <div className="font-bold text-slate-800">
                         {person.full_name}
@@ -558,7 +558,7 @@ export default function Home() {
               <button
                 onClick={checkIn}
                 disabled={loading}
-                className="rounded-xl bg-emerald-600 p-3 font-bold text-white shadow hover:bg-emerald-700 disabled:opacity-60"
+                className="cursor-pointer rounded-xl bg-emerald-600 p-3 font-bold text-white shadow hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 ยืนยันเช็คชื่อเข้า
               </button>
@@ -566,7 +566,7 @@ export default function Home() {
               <button
                 onClick={checkOut}
                 disabled={loading}
-                className="rounded-xl bg-blue-700 p-3 font-bold text-white shadow hover:bg-blue-800 disabled:opacity-60"
+                className="cursor-pointer rounded-xl bg-blue-700 p-3 font-bold text-white shadow hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 ยืนยันเช็คชื่อออก
               </button>
