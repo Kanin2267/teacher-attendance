@@ -375,8 +375,18 @@ export default function Home() {
 
   if (!user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
-        <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
+      <main
+        className="relative flex min-h-screen items-center justify-center px-4"
+        style={{
+          backgroundImage: "url('/login-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="absolute inset-0 bg-white/65 backdrop-blur-[1px]" />
+
+        <div className="relative z-10 w-full max-w-md rounded-3xl bg-white/90 p-8 shadow-2xl">
           <div className="text-center">
             <div className="mx-auto mb-4 flex justify-center">
               <div className="rounded-full bg-white p-2 shadow">
@@ -394,9 +404,9 @@ export default function Home() {
               ระบบเข้าออกออนไลน์
             </h1>
 
-            <p className="mt-2 text-slate-500">วิทยาลัยอาชีวศึกษาธนบุรี</p>
+            <p className="mt-2 text-slate-600">วิทยาลัยอาชีวศึกษาธนบุรี</p>
 
-            <p className="mt-4 text-sm text-slate-500">
+            <p className="mt-4 text-sm text-slate-600">
               กรุณาเข้าสู่ระบบด้วยบัญชี Google ของวิทยาลัยเท่านั้น
             </p>
 
@@ -520,13 +530,8 @@ export default function Home() {
                       </div>
 
                       <div className="text-sm text-slate-500">
-                        {person.category === "teacher"
-                          ? "ครู"
-                          : "เจ้าหน้าที่"}{" "}
-                        |{" "}
-                        {person.category === "teacher"
-                          ? "แผนกวิชา"
-                          : "งาน"}{" "}
+                        {person.category === "teacher" ? "ครู" : "เจ้าหน้าที่"} |{" "}
+                        {person.category === "teacher" ? "แผนกวิชา" : "งาน"}{" "}
                         {person.unit_name}
                       </div>
                     </button>
@@ -542,13 +547,8 @@ export default function Home() {
                 </p>
 
                 <p className="text-sm text-emerald-700">
-                  {selectedPerson.category === "teacher"
-                    ? "ครู"
-                    : "เจ้าหน้าที่"}{" "}
-                  |{" "}
-                  {selectedPerson.category === "teacher"
-                    ? "แผนกวิชา"
-                    : "งาน"}{" "}
+                  {selectedPerson.category === "teacher" ? "ครู" : "เจ้าหน้าที่"} |{" "}
+                  {selectedPerson.category === "teacher" ? "แผนกวิชา" : "งาน"}{" "}
                   {selectedPerson.unit_name}
                 </p>
               </div>
