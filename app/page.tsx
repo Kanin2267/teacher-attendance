@@ -224,10 +224,10 @@ export default function Home() {
 
     const { data: existingData, error: existingError } = await supabase
       .from("attendance_logs")
-      .select("id")
+      .select("id, check_in_at")
       .eq("personnel_id", selectedPerson.id)
       .eq("check_date", activeCheckDate)
-      .limit(1);
+      .maybeSingle();
 
     if (existingError) {
       setLoading(false);
@@ -235,10 +235,10 @@ export default function Home() {
       return;
     }
 
-    if (existingData && existingData.length > 0) {
+    if (existingData?.check_in_at) {
       setLoading(false);
-      alert("เช็คชื่อออนไลน์\nคุณได้ลงเวลาทำงานไว้แล้ว");
-      setMessage("บุคลากรรายนี้ได้ลงเวลาทำงานไว้แล้ว");
+      alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกเข้าอยู่แล้ว");
+      setMessage("มีข้อมูลบันทึกเข้าอยู่แล้ว");
       return;
     }
 
@@ -311,15 +311,12 @@ export default function Home() {
 
     setLoading(true);
 
-    const outTimeText = getBangkokTimeText(now);
-
     const { data, error: findError } = await supabase
       .from("attendance_logs")
-      .select("id")
+      .select("id, check_in_at, check_out_at")
       .eq("personnel_id", selectedPerson.id)
       .eq("check_date", activeCheckDate)
-      .is("check_out_at", null)
-      .limit(1);
+      .maybeSingle();
 
     if (findError) {
       setLoading(false);
@@ -327,11 +324,21 @@ export default function Home() {
       return;
     }
 
-    if (!data || data.length === 0) {
+    if (!data || !data.check_in_at) {
       setLoading(false);
-      setMessage("ไม่พบข้อมูลเช็คชื่อเข้า หรือเช็คชื่อออกไปแล้ว");
+      alert("เช็คชื่อออนไลน์\nยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
+      setMessage("ยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
       return;
     }
+
+    if (data.check_out_at) {
+      setLoading(false);
+      alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกออกอยู่แล้ว");
+      setMessage("มีข้อมูลบันทึกออกอยู่แล้ว");
+      return;
+    }
+
+    const outTimeText = getBangkokTimeText(now);
 
     const { error } = await supabase
       .from("attendance_logs")
@@ -340,7 +347,7 @@ export default function Home() {
         check_out_email: user.email,
         check_out_user_id: user.id,
       })
-      .eq("id", data[0].id);
+      .eq("id", data.id);
 
     setLoading(false);
 
@@ -384,7 +391,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-2xl font-bold text-slate-800">
-              ระบบเช็คชื่อออนไลน์
+              ระบบเข้าออกออนไลน์
             </h1>
 
             <p className="mt-2 text-slate-500">วิทยาลัยอาชีวศึกษาธนบุรี</p>
@@ -443,7 +450,7 @@ export default function Home() {
           </p>
 
           <h1 className="mt-2 text-2xl font-bold">
-            ระบบเช็คชื่อครูและเจ้าหน้าที่ออนไลน์
+            ระบบเข้าออกครูและเจ้าหน้าที่ออนไลน์
           </h1>
 
           <p className="mt-2 text-slate-300">
