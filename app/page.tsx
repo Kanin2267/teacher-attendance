@@ -279,6 +279,7 @@ export default function Home() {
       setMessage(
         `บันทึกเวลาเข้า ${serverTimeText} เรียบร้อย: ${selectedPerson.full_name}`
       );
+
       setSearch("");
       setSelectedPerson(null);
       loadServerClock();
@@ -288,6 +289,20 @@ export default function Home() {
     if (result.status === "duplicate_in") {
       alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกเข้าอยู่แล้ว");
       setMessage("มีข้อมูลบันทึกเข้าอยู่แล้ว");
+      return;
+    }
+
+    if (result.status === "too_late") {
+      alert("เช็คชื่อออนไลน์\nเกินเวลา 20.30 น. ไม่สามารถเช็คชื่อได้");
+      setMessage("เกินเวลา 20.30 น. ไม่สามารถเช็คชื่อได้");
+      return;
+    }
+
+    if (result.status === "email_not_allowed") {
+      await supabase.auth.signOut();
+      setUser(null);
+      alert("เช็คชื่อออนไลน์\nอนุญาตเฉพาะอีเมล @thonburi.ac.th เท่านั้น");
+      setMessage("อนุญาตเฉพาะอีเมล @thonburi.ac.th เท่านั้น");
       return;
     }
 
@@ -359,8 +374,8 @@ export default function Home() {
     }
 
     if (result.status === "too_late") {
-      alert("เช็คชื่อออนไลน์\nเกินเวลาเช็คชื่อออกแล้ว ไม่สามารถเช็คชื่อออกได้");
-      setMessage("เกินเวลาเช็คชื่อออกแล้ว ไม่สามารถเช็คชื่อออกได้");
+      alert("เช็คชื่อออนไลน์\nเกินเวลา 20.30 น. ไม่สามารถเช็คชื่อได้");
+      setMessage("เกินเวลา 20.30 น. ไม่สามารถเช็คชื่อได้");
       return;
     }
 
@@ -373,6 +388,14 @@ export default function Home() {
     if (result.status === "no_check_in") {
       alert("เช็คชื่อออนไลน์\nยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
       setMessage("ยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
+      return;
+    }
+
+    if (result.status === "email_not_allowed") {
+      await supabase.auth.signOut();
+      setUser(null);
+      alert("เช็คชื่อออนไลน์\nอนุญาตเฉพาะอีเมล @thonburi.ac.th เท่านั้น");
+      setMessage("อนุญาตเฉพาะอีเมล @thonburi.ac.th เท่านั้น");
       return;
     }
 
@@ -600,6 +623,7 @@ export default function Home() {
 
           <div className="mt-5 text-center text-sm text-slate-500">
             <p>เช็คชื่อออกได้เฉพาะเวลา 16.00–20.30 น. โดยอ้างอิงเวลา Server</p>
+            <p>หลังเวลา 20.30 น. ไม่สามารถเช็คชื่อเข้าและเช็คชื่อออกได้</p>
 
             <div className="mt-4 border-t border-slate-200 pt-4">
               <p className="font-semibold text-slate-700">
