@@ -68,16 +68,12 @@ export default function AdminPage() {
   };
 
   const getTodayBangkok = () => {
-    const now = new Date();
-
-    const dateText = now.toLocaleDateString("en-CA", {
+    return new Date().toLocaleDateString("en-CA", {
       timeZone: "Asia/Bangkok",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
     });
-
-    return dateText;
   };
 
   const loadSetting = async () => {
@@ -123,12 +119,17 @@ export default function AdminPage() {
   };
 
   const loadPeople = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("personnel")
       .select("*")
       .eq("is_active", true)
       .order("category", { ascending: true })
       .order("full_name", { ascending: true });
+
+    if (error) {
+      alert("โหลดรายชื่อไม่สำเร็จ: " + error.message);
+      return;
+    }
 
     setPeople(data || []);
   };
@@ -138,17 +139,27 @@ export default function AdminPage() {
 
     if (!selectedDate) return;
 
-    const { data } = await supabase
+    setLoading(true);
+
+    const { data, error } = await supabase
       .from("attendance_logs")
       .select("*")
       .eq("check_date", selectedDate)
       .order("created_at", { ascending: false });
+
+    setLoading(false);
+
+    if (error) {
+      alert("โหลดรายงานไม่สำเร็จ: " + error.message);
+      return;
+    }
 
     setLogs(data || []);
   };
 
   const loadAll = async () => {
     setLoading(true);
+
     await loadSetting();
     await loadPeople();
 
@@ -174,7 +185,6 @@ export default function AdminPage() {
 
   const filteredPeople = useMemo(() => {
     if (tab !== "teacher" && tab !== "staff") return [];
-
     return people.filter((person) => person.category === currentCategory);
   }, [people, currentCategory, tab]);
 
@@ -272,10 +282,25 @@ export default function AdminPage() {
     });
   };
 
+  const formatDateTime = (value: string | null) => {
+    if (!value) return "-";
+
+    return new Date(value).toLocaleString("th-TH", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
   const formatDateThai = (dateValue: string) => {
     if (!dateValue) return "-";
 
     return new Date(dateValue + "T00:00:00").toLocaleDateString("th-TH", {
+      timeZone: "Asia/Bangkok",
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -374,6 +399,8 @@ export default function AdminPage() {
       "อีเมลเช็คออก": log.check_out_email || "-",
       "เวลาเช็คชื่อเข้า": formatTime(log.check_in_at),
       "เวลาเช็คชื่อออก": formatTime(log.check_out_at),
+      "วันเวลาเช็คชื่อเข้า": formatDateTime(log.check_in_at),
+      "วันเวลาเช็คชื่อออก": formatDateTime(log.check_out_at),
       "สถานะการมาทำงาน": getWorkStatus(log.check_in_at).text,
       "สถานะเช็คออก": log.check_out_at
         ? "เช็คเข้า-ออกครบแล้ว"
@@ -392,6 +419,8 @@ export default function AdminPage() {
       { wch: 30 },
       { wch: 18 },
       { wch: 18 },
+      { wch: 25 },
+      { wch: 25 },
       { wch: 25 },
       { wch: 25 },
     ];
@@ -445,7 +474,7 @@ export default function AdminPage() {
 
             <button
               onClick={handleLogin}
-              className="mt-5 w-full rounded-xl bg-slate-800 p-3 font-bold text-white shadow hover:bg-slate-900"
+              className="mt-5 w-full cursor-pointer rounded-xl bg-slate-800 p-3 font-bold text-white shadow hover:bg-slate-900"
             >
               เข้าสู่ระบบ
             </button>
@@ -475,14 +504,14 @@ export default function AdminPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={loadAll}
-                className="rounded-xl bg-white px-5 py-3 font-bold text-slate-800 shadow hover:bg-slate-100"
+                className="cursor-pointer rounded-xl bg-white px-5 py-3 font-bold text-slate-800 shadow hover:bg-slate-100"
               >
                 รีเฟรชข้อมูล
               </button>
 
               <button
                 onClick={exportExcel}
-                className="rounded-xl bg-emerald-600 px-5 py-3 font-bold text-white shadow hover:bg-emerald-700"
+                className="cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 font-bold text-white shadow hover:bg-emerald-700"
               >
                 Export Excel
               </button>
@@ -511,7 +540,7 @@ export default function AdminPage() {
 
               <button
                 onClick={saveActiveDate}
-                className="rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
+                className="cursor-pointer rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
               >
                 บันทึกวันที่เช็คชื่อ
               </button>
@@ -537,7 +566,7 @@ export default function AdminPage() {
 
               <button
                 onClick={() => loadLogs(reportDate)}
-                className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800"
+                className="cursor-pointer rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800"
               >
                 ดูรายงานวันที่เลือก
               </button>
@@ -578,13 +607,28 @@ export default function AdminPage() {
               <SummaryCard title="มาทำงานปกติ" value={summary.normal} />
               <SummaryCard title="มาสาย" value={summary.late} />
               <SummaryCard title="เช็คออกแล้ว" value={summary.checkedOut} />
-              <SummaryCard title="ยังไม่เช็คออก" value={summary.notCheckedOut} />
+              <SummaryCard
+                title="ยังไม่เช็คออก"
+                value={summary.notCheckedOut}
+              />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <PieCard title="สัดส่วนบุคลากร" data={peoplePieData} colors={COLORS} />
-              <PieCard title="สถานะการมาทำงาน" data={statusPieData} colors={COLORS} />
-              <PieCard title="สถานะการเช็คชื่อออก" data={checkoutPieData} colors={COLORS} />
+              <PieCard
+                title="สัดส่วนบุคลากร"
+                data={peoplePieData}
+                colors={COLORS}
+              />
+              <PieCard
+                title="สถานะการมาทำงาน"
+                data={statusPieData}
+                colors={COLORS}
+              />
+              <PieCard
+                title="สถานะการเช็คชื่อออก"
+                data={checkoutPieData}
+                colors={COLORS}
+              />
             </div>
           </>
         )}
@@ -627,7 +671,7 @@ export default function AdminPage() {
 
                 <button
                   onClick={savePersonnel}
-                  className="w-full rounded-xl bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700"
+                  className="w-full cursor-pointer rounded-xl bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700"
                 >
                   {editingId ? "บันทึกการแก้ไข" : "เพิ่มข้อมูล"}
                 </button>
@@ -635,7 +679,7 @@ export default function AdminPage() {
                 {editingId && (
                   <button
                     onClick={resetForm}
-                    className="w-full rounded-xl bg-slate-200 p-3 font-bold text-slate-700 hover:bg-slate-300"
+                    className="w-full cursor-pointer rounded-xl bg-slate-200 p-3 font-bold text-slate-700 hover:bg-slate-300"
                   >
                     ยกเลิกการแก้ไข
                   </button>
@@ -682,13 +726,13 @@ export default function AdminPage() {
                             <div className="flex justify-center gap-2">
                               <button
                                 onClick={() => editPersonnel(person)}
-                                className="rounded-lg bg-amber-500 px-3 py-2 font-bold text-white hover:bg-amber-600"
+                                className="cursor-pointer rounded-lg bg-amber-500 px-3 py-2 font-bold text-white hover:bg-amber-600"
                               >
                                 แก้ไข
                               </button>
                               <button
                                 onClick={() => deletePersonnel(person.id)}
-                                className="rounded-lg bg-red-600 px-3 py-2 font-bold text-white hover:bg-red-700"
+                                className="cursor-pointer rounded-lg bg-red-600 px-3 py-2 font-bold text-white hover:bg-red-700"
                               >
                                 ลบ
                               </button>
@@ -718,7 +762,7 @@ export default function AdminPage() {
 
               <button
                 onClick={() => loadLogs(reportDate)}
-                className="rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
+                className="cursor-pointer rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
               >
                 รีเฟรชรายงาน
               </button>
@@ -736,6 +780,8 @@ export default function AdminPage() {
                     <th className="border p-3">อีเมลเช็คออก</th>
                     <th className="border p-3">เวลาเข้า</th>
                     <th className="border p-3">เวลาออก</th>
+                    <th className="border p-3">วันเวลาเข้า</th>
+                    <th className="border p-3">วันเวลาออก</th>
                     <th className="border p-3">สถานะการมาทำงาน</th>
                     <th className="border p-3">สถานะเช็คออก</th>
                   </tr>
@@ -744,13 +790,13 @@ export default function AdminPage() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={10} className="border p-6 text-center">
+                      <td colSpan={12} className="border p-6 text-center">
                         กำลังโหลดข้อมูล...
                       </td>
                     </tr>
                   ) : logs.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="border p-6 text-center">
+                      <td colSpan={12} className="border p-6 text-center">
                         ยังไม่มีข้อมูลเช็คชื่อในวันที่เลือก
                       </td>
                     </tr>
@@ -760,7 +806,9 @@ export default function AdminPage() {
 
                       return (
                         <tr key={log.id} className="hover:bg-slate-50">
-                          <td className="border p-3 text-center">{index + 1}</td>
+                          <td className="border p-3 text-center">
+                            {index + 1}
+                          </td>
 
                           <td className="border p-3 font-medium">
                             {log.full_name_snapshot}
@@ -793,6 +841,14 @@ export default function AdminPage() {
                           </td>
 
                           <td className="border p-3 text-center">
+                            {formatDateTime(log.check_in_at)}
+                          </td>
+
+                          <td className="border p-3 text-center">
+                            {formatDateTime(log.check_out_at)}
+                          </td>
+
+                          <td className="border p-3 text-center">
                             <span className={status.className}>
                               {status.text}
                             </span>
@@ -818,6 +874,13 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        <div className="mt-8 text-center text-sm text-slate-500">
+          <p className="font-semibold text-slate-700">
+            ผู้พัฒนา: ครูคณิน สัจจารักษ์
+          </p>
+          <p>แผนกวิชาเทคโนโลยีสารสนเทศ</p>
+        </div>
       </div>
     </main>
   );
@@ -835,7 +898,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`rounded-xl px-5 py-3 font-bold shadow ${
+      className={`cursor-pointer rounded-xl px-5 py-3 font-bold shadow ${
         active ? "bg-slate-800 text-white" : "bg-white text-slate-700"
       }`}
     >
