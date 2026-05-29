@@ -14,6 +14,17 @@ type Personnel = {
   unit_name: string;
 };
 
+type RpcResult = {
+  status: string;
+  message: string;
+  server_time: string;
+};
+
+type ClockBase = {
+  serverMs: number;
+  performanceMs: number;
+};
+
 export default function Home() {
   const [people, setPeople] = useState<Personnel[]>([]);
   const [search, setSearch] = useState("");
@@ -22,6 +33,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [clockBase, setClockBase] = useState<ClockBase | null>(null);
   const [activeCheckDate, setActiveCheckDate] = useState("");
 
   const [user, setUser] = useState<User | null>(null);
@@ -30,6 +42,24 @@ export default function Home() {
   const isAllowedEmail = (email?: string | null) => {
     if (!email) return false;
     return email.toLowerCase().endsWith(ALLOWED_EMAIL_DOMAIN);
+  };
+
+  const loadServerClock = async () => {
+    const { data, error } = await supabase.rpc("get_server_time");
+
+    if (error || !data) {
+      setMessage("โหลดเวลา Server ไม่สำเร็จ");
+      return;
+    }
+
+    const serverDate = new Date(data as string);
+    const base = {
+      serverMs: serverDate.getTime(),
+      performanceMs: performance.now(),
+    };
+
+    setClockBase(base);
+    setCurrentTime(serverDate);
   };
 
   const loadPeople = async () => {
@@ -64,9 +94,21 @@ export default function Home() {
   };
 
   useEffect(() => {
+    loadServerClock();
     loadPeople();
     loadActiveDate();
   }, []);
+
+  useEffect(() => {
+    if (!clockBase) return;
+
+    const timer = setInterval(() => {
+      const elapsedMs = performance.now() - clockBase.performanceMs;
+      setCurrentTime(new Date(clockBase.serverMs + elapsedMs));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [clockBase]);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -107,14 +149,6 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
   const filteredPeople = useMemo(() => {
     const keyword = search.trim().toLowerCase();
 
@@ -149,25 +183,15 @@ export default function Home() {
     setMessage("");
   };
 
-  const getBangkokTimeText = (date: Date) => {
+  const getBangkokTimeText = (dateValue: string | Date) => {
+    const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
+
     return date.toLocaleTimeString("th-TH", {
       timeZone: "Asia/Bangkok",
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
     });
-  };
-
-  const getBangkokHourMinute = (date: Date) => {
-    const timeText = date.toLocaleTimeString("en-GB", {
-      timeZone: "Asia/Bangkok",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-
-    const [hour, minute] = timeText.split(":").map(Number);
-    return { hour, minute };
   };
 
   const currentDateText = currentTime.toLocaleDateString("th-TH", {
@@ -188,6 +212,7 @@ export default function Home() {
 
   const activeDateText = activeCheckDate
     ? new Date(activeCheckDate + "T00:00:00").toLocaleDateString("th-TH", {
+        timeZone: "Asia/Bangkok",
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -222,49 +247,44 @@ export default function Home() {
 
     setLoading(true);
 
-    const { data: existingData, error: existingError } = await supabase
-      .from("attendance_logs")
-      .select("id, check_in_at")
-      .eq("personnel_id", selectedPerson.id)
-      .eq("check_date", activeCheckDate)
-      .maybeSingle();
-
-    if (existingError) {
-      setLoading(false);
-      setMessage("เกิดข้อผิดพลาด: " + existingError.message);
-      return;
-    }
-
-    if (existingData?.check_in_at) {
-      setLoading(false);
-      alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกเข้าอยู่แล้ว");
-      setMessage("มีข้อมูลบันทึกเข้าอยู่แล้ว");
-      return;
-    }
-
-    const now = new Date();
-
-    const { error } = await supabase.from("attendance_logs").insert({
-      personnel_id: selectedPerson.id,
-      full_name_snapshot: selectedPerson.full_name,
-      category_snapshot: selectedPerson.category,
-      unit_name_snapshot: selectedPerson.unit_name,
-      check_date: activeCheckDate,
-      check_in_at: now.toISOString(),
-      login_email: user.email,
-      login_user_id: user.id,
+    const { data, error } = await supabase.rpc("check_in_attendance", {
+      p_personnel_id: selectedPerson.id,
+      p_check_date: activeCheckDate,
+      p_login_email: user.email,
+      p_login_user_id: user.id,
     });
 
     setLoading(false);
 
     if (error) {
       setMessage("เกิดข้อผิดพลาด: " + error.message);
-    } else {
-      alert("เช็คชื่อออนไลน์\nคุณได้ลงเวลาทำงานเรียบร้อยแล้ว");
-      setMessage(`บันทึกเวลาเข้าเรียบร้อย: ${selectedPerson.full_name}`);
+      return;
+    }
+
+    const result = data as RpcResult;
+
+    if (result.status === "success") {
+      const serverTimeText = getBangkokTimeText(result.server_time);
+
+      alert(
+        `เช็คชื่อออนไลน์\nคุณได้ลงเวลาทำงานเวลา ${serverTimeText} เรียบร้อยแล้ว`
+      );
+
+      setMessage(`บันทึกเวลาเข้า ${serverTimeText} เรียบร้อย: ${selectedPerson.full_name}`);
       setSearch("");
       setSelectedPerson(null);
+      loadServerClock();
+      return;
     }
+
+    if (result.status === "duplicate_in") {
+      alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกเข้าอยู่แล้ว");
+      setMessage("มีข้อมูลบันทึกเข้าอยู่แล้ว");
+      return;
+    }
+
+    alert(`เช็คชื่อออนไลน์\n${result.message}`);
+    setMessage(result.message);
   };
 
   const checkOut = async () => {
@@ -292,73 +312,62 @@ export default function Home() {
       return;
     }
 
-    const now = new Date();
-    const { hour, minute } = getBangkokHourMinute(now);
-
-    if (hour < 16) {
-      alert(
-        "เช็คชื่อออนไลน์\nยังไม่ถึงเวลาเช็คชื่อออก กรุณาเช็คชื่อออกหลังเวลา 16.00 น."
-      );
-      setMessage("ยังไม่ถึงเวลาเช็คชื่อออก กรุณาเช็คชื่อออกหลังเวลา 16.00 น.");
-      return;
-    }
-
-    if (hour > 20 || (hour === 20 && minute > 30)) {
-      alert("เช็คชื่อออนไลน์\nเกินเวลาเช็คชื่อออกแล้ว ไม่สามารถเช็คชื่อออกได้");
-      setMessage("เกินเวลาเช็คชื่อออกแล้ว ไม่สามารถเช็คชื่อออกได้");
-      return;
-    }
-
     setLoading(true);
 
-    const { data, error: findError } = await supabase
-      .from("attendance_logs")
-      .select("id, check_in_at, check_out_at")
-      .eq("personnel_id", selectedPerson.id)
-      .eq("check_date", activeCheckDate)
-      .maybeSingle();
-
-    if (findError) {
-      setLoading(false);
-      setMessage("เกิดข้อผิดพลาด: " + findError.message);
-      return;
-    }
-
-    if (!data || !data.check_in_at) {
-      setLoading(false);
-      alert("เช็คชื่อออนไลน์\nยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
-      setMessage("ยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
-      return;
-    }
-
-    if (data.check_out_at) {
-      setLoading(false);
-      alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกออกอยู่แล้ว");
-      setMessage("มีข้อมูลบันทึกออกอยู่แล้ว");
-      return;
-    }
-
-    const outTimeText = getBangkokTimeText(now);
-
-    const { error } = await supabase
-      .from("attendance_logs")
-      .update({
-        check_out_at: now.toISOString(),
-        check_out_email: user.email,
-        check_out_user_id: user.id,
-      })
-      .eq("id", data.id);
+    const { data, error } = await supabase.rpc("check_out_attendance", {
+      p_personnel_id: selectedPerson.id,
+      p_check_date: activeCheckDate,
+      p_check_out_email: user.email,
+      p_check_out_user_id: user.id,
+    });
 
     setLoading(false);
 
     if (error) {
       setMessage("เกิดข้อผิดพลาด: " + error.message);
-    } else {
+      return;
+    }
+
+    const result = data as RpcResult;
+
+    if (result.status === "success") {
+      const outTimeText = getBangkokTimeText(result.server_time);
+
       alert(`เช็คชื่อออนไลน์\nคุณลงชื่อออกเวลา ${outTimeText} เรียบร้อยแล้ว`);
+
       setMessage(`บันทึกเวลาออก ${outTimeText} เรียบร้อยแล้ว`);
       setSearch("");
       setSelectedPerson(null);
+      loadServerClock();
+      return;
     }
+
+    if (result.status === "too_early") {
+      alert("เช็คชื่อออนไลน์\nยังไม่ถึงเวลาเช็คชื่อออก กรุณาเช็คชื่อออกหลังเวลา 16.00 น.");
+      setMessage("ยังไม่ถึงเวลาเช็คชื่อออก กรุณาเช็คชื่อออกหลังเวลา 16.00 น.");
+      return;
+    }
+
+    if (result.status === "too_late") {
+      alert("เช็คชื่อออนไลน์\nเกินเวลาเช็คชื่อออกแล้ว ไม่สามารถเช็คชื่อออกได้");
+      setMessage("เกินเวลาเช็คชื่อออกแล้ว ไม่สามารถเช็คชื่อออกได้");
+      return;
+    }
+
+    if (result.status === "duplicate_out") {
+      alert("เช็คชื่อออนไลน์\nมีข้อมูลบันทึกออกอยู่แล้ว");
+      setMessage("มีข้อมูลบันทึกออกอยู่แล้ว");
+      return;
+    }
+
+    if (result.status === "no_check_in") {
+      alert("เช็คชื่อออนไลน์\nยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
+      setMessage("ยังไม่มีข้อมูลบันทึกเข้า ไม่สามารถบันทึกออกได้");
+      return;
+    }
+
+    alert(`เช็คชื่อออนไลน์\n${result.message}`);
+    setMessage(result.message);
   };
 
   if (authLoading) {
@@ -468,7 +477,7 @@ export default function Home() {
           </p>
 
           <div className="mx-auto mt-5 max-w-sm rounded-2xl border border-slate-600 bg-slate-900/40 px-5 py-4">
-            <p className="text-sm text-slate-300">เวลาปัจจุบัน</p>
+            <p className="text-sm text-slate-300">เวลาปัจจุบันจาก Server</p>
             <p className="mt-1 text-4xl font-bold tracking-wider text-white">
               {currentTimeText}
             </p>
@@ -580,7 +589,7 @@ export default function Home() {
           </div>
 
           <div className="mt-5 text-center text-sm text-slate-500">
-            <p>เช็คชื่อออกได้เฉพาะเวลา 16.00–20.30 น.</p>
+            <p>เช็คชื่อออกได้เฉพาะเวลา 16.00–20.30 น. โดยอ้างอิงเวลา Server</p>
 
             <div className="mt-4 border-t border-slate-200 pt-4">
               <p className="font-semibold text-slate-700">
