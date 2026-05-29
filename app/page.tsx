@@ -377,7 +377,7 @@ export default function Home() {
   if (authLoading) {
     return (
       <main
-        className="relative flex min-h-screen items-center justify-center px-4"
+        className="flex min-h-screen items-center justify-center px-4"
         style={{
           backgroundImage: "url('/checkin-bg.jpg')",
           backgroundSize: "cover",
@@ -385,9 +385,9 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-purple-950/70" />
-        <div className="relative animate-soft-zoom rounded-3xl border border-white/30 bg-white/90 px-8 py-6 text-center shadow-2xl backdrop-blur-md">
-          <p className="text-lg font-semibold text-purple-950">
+        <div className="absolute inset-0 bg-slate-900/55" />
+        <div className="relative rounded-3xl border border-white/20 bg-white/90 px-8 py-6 text-center shadow-2xl backdrop-blur-md">
+          <p className="text-lg font-semibold text-slate-800">
             กำลังตรวจสอบการเข้าสู่ระบบ...
           </p>
         </div>
@@ -406,23 +406,23 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-purple-950/70" />
+        <div className="absolute inset-0 bg-slate-950/60" />
 
-        <div className="relative z-10 w-full max-w-md animate-soft-fade-up overflow-hidden rounded-[34px] border border-white/25 bg-white/95 shadow-2xl backdrop-blur-md">
-          <div className="bg-tvc-purple-dark px-8 py-8 text-center text-white">
+        <div className="relative z-10 w-full max-w-md overflow-hidden rounded-[32px] border border-white/20 bg-white/92 shadow-2xl backdrop-blur-md">
+          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-8 py-8 text-center text-white">
             <div className="mx-auto mb-4 flex justify-center">
-              <div className="animate-slow-float rounded-full bg-white p-2 shadow-xl">
+              <div className="rounded-full bg-white p-2 shadow-lg">
                 <Image
                   src="/logo.jpg"
                   alt="โลโก้วิทยาลัยอาชีวศึกษาธนบุรี"
-                  width={112}
-                  height={112}
+                  width={110}
+                  height={110}
                   className="rounded-full object-cover"
                 />
               </div>
             </div>
 
-            <p className="text-xs tracking-[0.28em] text-purple-100">
+            <p className="text-sm tracking-[0.25em] text-slate-300">
               THONBURI VOCATIONAL COLLEGE
             </p>
 
@@ -430,24 +430,24 @@ export default function Home() {
               ระบบเข้าออกออนไลน์
             </h1>
 
-            <p className="mt-2 text-sm text-purple-100">
+            <p className="mt-2 text-sm text-slate-300">
               วิทยาลัยอาชีวศึกษาธนบุรี
             </p>
           </div>
 
           <div className="px-8 py-8">
-            <div className="mb-5 rounded-2xl border border-purple-100 bg-purple-50 p-4 text-center">
-              <p className="text-sm text-purple-800">
+            <div className="mb-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center">
+              <p className="text-sm text-slate-600">
                 กรุณาเข้าสู่ระบบด้วยบัญชี Google ของวิทยาลัย
               </p>
-              <p className="mt-1 font-bold text-purple-950">
+              <p className="mt-1 font-semibold text-slate-800">
                 ใช้อีเมล @thonburi.ac.th เท่านั้น
               </p>
             </div>
 
             <button
               onClick={loginWithGoogle}
-              className="animate-glow-pulse w-full cursor-pointer rounded-2xl bg-purple-800 px-5 py-4 text-base font-bold text-white shadow-lg transition hover:bg-purple-950"
+              className="w-full cursor-pointer rounded-2xl bg-slate-800 px-5 py-4 text-base font-bold text-white shadow-lg transition hover:bg-slate-900"
             >
               เข้าสู่ระบบด้วย Gmail
             </button>
@@ -458,8 +458,8 @@ export default function Home() {
               </div>
             )}
 
-            <div className="mt-6 border-t border-purple-100 pt-5 text-center text-sm text-slate-500">
-              <p className="font-semibold text-purple-950">
+            <div className="mt-6 border-t border-slate-200 pt-5 text-center text-sm text-slate-500">
+              <p className="font-semibold text-slate-700">
                 ผู้พัฒนา: ครูคณิน สัจจารักษ์
               </p>
               <p>แผนกวิชาเทคโนโลยีสารสนเทศ</p>
@@ -480,14 +480,14 @@ export default function Home() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="absolute inset-0 bg-purple-950/75" />
+      <div className="absolute inset-0 bg-slate-950/65" />
 
-      <div className="relative z-10 mx-auto max-w-7xl animate-soft-fade-up">
-        <div className="mb-6 overflow-hidden rounded-[34px] border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md">
-          <div className="bg-tvc-purple-dark px-6 py-8 text-white md:px-10">
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="mb-6 overflow-hidden rounded-[32px] border border-white/15 bg-white/10 shadow-2xl backdrop-blur-md">
+          <div className="bg-gradient-to-r from-slate-950/80 via-slate-900/80 to-slate-950/80 px-6 py-8 text-white md:px-10">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-                <div className="mx-auto rounded-full bg-white p-2 shadow-xl sm:mx-0">
+              <div className="flex items-center gap-5">
+                <div className="rounded-full bg-white p-2 shadow-xl">
                   <Image
                     src="/logo.jpg"
                     alt="โลโก้วิทยาลัยอาชีวศึกษาธนบุรี"
@@ -497,23 +497,23 @@ export default function Home() {
                   />
                 </div>
 
-                <div className="text-center sm:text-left">
-                  <p className="text-xs tracking-[0.3em] text-purple-100">
+                <div>
+                  <p className="text-xs tracking-[0.3em] text-slate-300">
                     THONBURI VOCATIONAL COLLEGE
                   </p>
                   <h1 className="mt-2 text-2xl font-bold md:text-3xl">
                     ระบบเข้าออกครูและเจ้าหน้าที่ออนไลน์
                   </h1>
-                  <p className="mt-2 text-sm text-purple-100 md:text-base">
+                  <p className="mt-2 text-sm text-slate-300 md:text-base">
                     วิทยาลัยอาชีวศึกษาธนบุรี
                   </p>
-                  <p className="mt-1 text-sm text-purple-100">
+                  <p className="mt-1 text-sm text-slate-300">
                     วันที่เปิดให้เช็คชื่อ: {activeDateText}
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:min-w-[380px]">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:min-w-[360px]">
                 <InfoBox label="เวลา Server ปัจจุบัน" value={currentTimeText} />
                 <InfoBox label="วันที่ปัจจุบัน" value={currentDateText} />
               </div>
@@ -522,24 +522,22 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <section className="overflow-hidden rounded-[34px] border border-white/25 bg-white/95 shadow-2xl lg:col-span-2">
-            <div className="border-b border-purple-100 bg-purple-50 px-6 py-5 md:px-8">
-              <h2 className="text-xl font-bold text-purple-950">
+          <section className="lg:col-span-2 overflow-hidden rounded-[32px] border border-white/15 bg-white/92 shadow-2xl">
+            <div className="border-b border-slate-200 bg-slate-50 px-6 py-5 md:px-8">
+              <h2 className="text-xl font-bold text-slate-800">
                 บันทึกเวลาเข้า - ออก
               </h2>
-              <p className="mt-1 text-sm text-purple-700">
+              <p className="mt-1 text-sm text-slate-500">
                 กรุณาค้นหารายชื่อของท่าน และยืนยันการลงเวลาโดยใช้บัญชีอีเมลของวิทยาลัย
               </p>
             </div>
 
             <div className="px-6 py-6 md:px-8 md:py-8">
-              <div className="mb-6 rounded-2xl border border-purple-100 bg-white p-4 shadow-sm">
+              <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="text-sm text-slate-500">
-                      ผู้ใช้งานที่เข้าสู่ระบบ
-                    </p>
-                    <p className="mt-1 font-semibold text-purple-950">
+                    <p className="text-sm text-slate-500">ผู้ใช้งานที่เข้าสู่ระบบ</p>
+                    <p className="mt-1 font-semibold text-slate-800">
                       {user.email}
                     </p>
                   </div>
@@ -553,8 +551,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-purple-100 bg-purple-50/70 p-5">
-                <label className="mb-2 block text-sm font-semibold text-purple-950">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
                   ค้นหารายชื่อบุคลากร
                 </label>
 
@@ -565,12 +563,12 @@ export default function Home() {
                     setSelectedPerson(null);
                     setMessage("");
                   }}
-                  className="w-full rounded-2xl border border-purple-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-purple-800 focus:ring-2 focus:ring-purple-200"
+                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-slate-700"
                   placeholder="พิมพ์ชื่อ-สกุล / แผนกวิชา / งาน"
                 />
 
                 {search && !selectedPerson && (
-                  <div className="mt-3 max-h-72 overflow-y-auto rounded-2xl border border-purple-100 bg-white shadow-sm">
+                  <div className="mt-3 max-h-72 overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
                     {filteredPeople.length === 0 ? (
                       <div className="p-4 text-center text-sm text-slate-500">
                         ไม่พบรายชื่อ
@@ -584,9 +582,9 @@ export default function Home() {
                             setSearch(person.full_name);
                             setMessage("");
                           }}
-                          className="block w-full cursor-pointer border-b border-purple-50 px-4 py-4 text-left transition hover:bg-purple-50"
+                          className="block w-full cursor-pointer border-b border-slate-100 px-4 py-4 text-left transition hover:bg-slate-50"
                         >
-                          <div className="font-bold text-purple-950">
+                          <div className="font-bold text-slate-800">
                             {person.full_name}
                           </div>
                           <div className="mt-1 text-sm text-slate-500">
@@ -603,7 +601,7 @@ export default function Home() {
                 )}
 
                 {selectedPerson && (
-                  <div className="mt-4 animate-soft-zoom rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                  <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
                     <p className="text-sm text-emerald-700">รายชื่อที่เลือก</p>
                     <p className="mt-1 text-lg font-bold text-emerald-900">
                       {selectedPerson.full_name}
@@ -624,7 +622,7 @@ export default function Home() {
                   <button
                     onClick={checkIn}
                     disabled={loading}
-                    className="cursor-pointer rounded-2xl bg-emerald-600 px-5 py-4 text-base font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="cursor-pointer rounded-2xl bg-emerald-600 px-5 py-4 text-base font-bold text-white shadow-lg transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     ยืนยันเช็คชื่อเข้า
                   </button>
@@ -632,14 +630,14 @@ export default function Home() {
                   <button
                     onClick={checkOut}
                     disabled={loading}
-                    className="cursor-pointer rounded-2xl bg-purple-800 px-5 py-4 text-base font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-purple-950 disabled:cursor-not-allowed disabled:opacity-60"
+                    className="cursor-pointer rounded-2xl bg-blue-700 px-5 py-4 text-base font-bold text-white shadow-lg transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     ยืนยันเช็คชื่อออก
                   </button>
                 </div>
 
                 {message && (
-                  <div className="mt-5 animate-soft-zoom rounded-2xl border border-amber-300 bg-amber-50 px-4 py-4 text-center text-sm font-medium text-amber-800">
+                  <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-4 text-center text-sm font-medium text-amber-800">
                     {message}
                   </div>
                 )}
@@ -648,9 +646,9 @@ export default function Home() {
           </section>
 
           <aside className="space-y-6">
-            <div className="overflow-hidden rounded-[34px] border border-white/25 bg-white/95 shadow-2xl">
-              <div className="border-b border-purple-100 bg-purple-50 px-6 py-5">
-                <h3 className="text-lg font-bold text-purple-950">
+            <div className="overflow-hidden rounded-[32px] border border-white/15 bg-white/92 shadow-2xl">
+              <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+                <h3 className="text-lg font-bold text-slate-800">
                   ข้อมูลการใช้งาน
                 </h3>
               </div>
@@ -658,7 +656,7 @@ export default function Home() {
               <div className="space-y-4 px-6 py-6">
                 <SideInfoCard
                   title="เงื่อนไขเช็คชื่อเข้า"
-                  detail="ระบบบันทึกเวลาจาก Server เพื่อป้องกันการแก้ไขเวลาในเครื่องผู้ใช้งาน"
+                  detail="สามารถเช็คชื่อเข้าได้ตามวันที่ผู้ดูแลระบบกำหนด โดยระบบบันทึกเวลาจาก Server"
                 />
                 <SideInfoCard
                   title="เงื่อนไขเช็คชื่อออก"
@@ -671,9 +669,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[34px] border border-white/25 bg-white/95 shadow-2xl">
-              <div className="border-b border-purple-100 bg-purple-50 px-6 py-5">
-                <h3 className="text-lg font-bold text-purple-950">
+            <div className="overflow-hidden rounded-[32px] border border-white/15 bg-white/92 shadow-2xl">
+              <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+                <h3 className="text-lg font-bold text-slate-800">
                   คำแนะนำการใช้งาน
                 </h3>
               </div>
@@ -687,10 +685,10 @@ export default function Home() {
                   <li>5. กดปุ่มเช็คชื่อออกเมื่อสิ้นสุดเวลาปฏิบัติงาน</li>
                 </ol>
 
-                <div className="mt-6 rounded-2xl bg-tvc-purple-dark px-4 py-4 text-center text-white">
-                  <p className="text-sm text-purple-100">ผู้พัฒนา</p>
+                <div className="mt-6 rounded-2xl bg-slate-800 px-4 py-4 text-center text-white">
+                  <p className="text-sm text-slate-300">ผู้พัฒนา</p>
                   <p className="mt-1 font-bold">ครูคณิน สัจจารักษ์</p>
-                  <p className="text-sm text-purple-100">
+                  <p className="text-sm text-slate-300">
                     แผนกวิชาเทคโนโลยีสารสนเทศ
                   </p>
                 </div>
@@ -705,8 +703,8 @@ export default function Home() {
 
 function InfoBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-4 text-white backdrop-blur-sm">
-      <p className="text-xs text-purple-100">{label}</p>
+    <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-4 text-white backdrop-blur-sm">
+      <p className="text-xs text-slate-300">{label}</p>
       <p className="mt-1 text-lg font-bold">{value}</p>
     </div>
   );
@@ -720,9 +718,9 @@ function SideInfoCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-2xl border border-purple-100 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <p className="font-semibold text-purple-950">{title}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="font-semibold text-slate-800">{title}</p>
       <p className="mt-2 text-sm leading-6 text-slate-600">{detail}</p>
-    </div>
+    </div> 
   );
 }

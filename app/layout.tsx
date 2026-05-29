@@ -3,8 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ระบบเข้าออก | วิทยาลัยอาชีวศึกษาธนบุรี",
-  description:
-    "ระบบบันทึกเวลาเข้าออกครูและเจ้าหน้าที่ วิทยาลัยอาชีวศึกษาธนบุรี",
+  description: "ระบบบันทึกเวลาเข้าออกครูและเจ้าหน้าที่ วิทยาลัยอาชีวศึกษาธนบุรี",
   icons: {
     icon: "/logo.jpg",
     shortcut: "/logo.jpg",

@@ -159,6 +159,7 @@ export default function AdminPage() {
 
   const loadAll = async () => {
     setLoading(true);
+
     await loadSetting();
     await loadPeople();
 
@@ -380,7 +381,7 @@ export default function AdminPage() {
     { name: "ยังไม่เช็คออก", value: summary.notCheckedOut },
   ];
 
-  const COLORS = ["#7c3aed", "#a855f7", "#ef4444", "#f59e0b"];
+  const COLORS = ["#1d4ed8", "#059669", "#dc2626", "#f59e0b"];
 
   const exportExcel = () => {
     if (!reportDate) {
@@ -435,30 +436,22 @@ export default function AdminPage() {
 
   if (!isLogin) {
     return (
-      <main
-        className="relative flex min-h-screen items-center justify-center px-4"
-        style={{
-          backgroundImage: "url('/checkin-bg.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-purple-950/75" />
-
-        <div className="relative z-10 w-full max-w-md animate-soft-fade-up overflow-hidden rounded-[34px] border border-white/25 bg-white/95 shadow-2xl backdrop-blur-md">
-          <div className="bg-tvc-purple-dark px-8 py-8 text-center text-white">
-            <p className="text-xs tracking-[0.3em] text-purple-100">
-              ADMIN PANEL
+      <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
+        <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
+          <div className="text-center">
+            <p className="text-sm tracking-widest text-slate-500">
+              ADMIN LOGIN
             </p>
-            <h1 className="mt-3 text-2xl font-bold">เข้าสู่ระบบผู้ดูแล</h1>
-            <p className="mt-2 text-sm text-purple-100">
-              ระบบรายงานการเข้าออกออนไลน์
+            <h1 className="mt-2 text-2xl font-bold text-slate-800">
+              เข้าสู่ระบบผู้ดูแล
+            </h1>
+            <p className="mt-2 text-sm text-slate-500">
+              ระบบรายงานการเช็คชื่อครูและเจ้าหน้าที่
             </p>
           </div>
 
-          <div className="px-8 py-8">
-            <label className="mb-2 block font-semibold text-purple-950">
+          <div className="mt-6">
+            <label className="mb-2 block font-semibold text-slate-700">
               รหัสผ่านผู้ดูแล
             </label>
 
@@ -469,29 +462,22 @@ export default function AdminPage() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleLogin();
               }}
-              className="w-full rounded-2xl border border-purple-200 bg-white px-4 py-3 outline-none transition focus:border-purple-800 focus:ring-2 focus:ring-purple-200"
+              className="w-full rounded-xl border border-slate-300 p-3 outline-none focus:border-slate-700"
               placeholder="กรอกรหัสผ่าน"
             />
 
             {loginError && (
-              <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700">
+              <div className="mt-3 rounded-xl bg-red-50 p-3 text-center text-sm font-medium text-red-700">
                 {loginError}
               </div>
             )}
 
             <button
               onClick={handleLogin}
-              className="mt-5 w-full cursor-pointer rounded-2xl bg-purple-800 px-5 py-4 font-bold text-white shadow-lg transition hover:bg-purple-950"
+              className="mt-5 w-full cursor-pointer rounded-xl bg-slate-800 p-3 font-bold text-white shadow hover:bg-slate-900"
             >
               เข้าสู่ระบบ
             </button>
-
-            <div className="mt-6 border-t border-purple-100 pt-5 text-center text-sm text-slate-500">
-              <p className="font-semibold text-purple-950">
-                ผู้พัฒนา: ครูคณิน สัจจารักษ์
-              </p>
-              <p>แผนกวิชาเทคโนโลยีสารสนเทศ</p>
-            </div>
           </div>
         </div>
       </main>
@@ -499,77 +485,96 @@ export default function AdminPage() {
   }
 
   return (
-    <main
-      className="relative min-h-screen px-4 py-6 md:px-6 md:py-10"
-      style={{
-        backgroundImage: "url('/checkin-bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="absolute inset-0 bg-purple-950/75" />
+    <main className="min-h-screen bg-slate-100 px-4 py-6">
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-3xl bg-slate-800 p-6 text-white shadow-xl">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm tracking-widest text-slate-300">
+                ADMIN DASHBOARD
+              </p>
+              <h1 className="mt-1 text-2xl font-bold">
+                ระบบจัดการข้อมูลบุคลากรและรายงานเช็คชื่อ
+              </h1>
+              <p className="mt-1 text-slate-300">
+                วิทยาลัยอาชีวศึกษาธนบุรี
+              </p>
+            </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl animate-soft-fade-up">
-        <div className="mb-6 overflow-hidden rounded-[34px] border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md">
-          <div className="bg-tvc-purple-dark px-6 py-8 text-white md:px-10">
-            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="text-xs tracking-[0.3em] text-purple-100">
-                  ADMIN DASHBOARD
-                </p>
-                <h1 className="mt-2 text-2xl font-bold md:text-3xl">
-                  ระบบจัดการข้อมูลบุคลากรและรายงานเข้าออก
-                </h1>
-                <p className="mt-2 text-sm text-purple-100">
-                  วิทยาลัยอาชีวศึกษาธนบุรี
-                </p>
-              </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={loadAll}
+                className="cursor-pointer rounded-xl bg-white px-5 py-3 font-bold text-slate-800 shadow hover:bg-slate-100"
+              >
+                รีเฟรชข้อมูล
+              </button>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={loadAll}
-                  className="cursor-pointer rounded-2xl bg-white px-5 py-3 font-bold text-purple-950 shadow-lg transition hover:bg-purple-50"
-                >
-                  รีเฟรชข้อมูล
-                </button>
-
-                <button
-                  onClick={exportExcel}
-                  className="cursor-pointer rounded-2xl bg-emerald-600 px-5 py-3 font-bold text-white shadow-lg transition hover:bg-emerald-700"
-                >
-                  Export Excel
-                </button>
-              </div>
+              <button
+                onClick={exportExcel}
+                className="cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 font-bold text-white shadow hover:bg-emerald-700"
+              >
+                Export Excel
+              </button>
             </div>
           </div>
         </div>
 
-        <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <DateCard
-            title="กำหนดวันที่เปิดให้เช็คชื่อ"
-            description={`วันที่ปัจจุบันที่เปิดให้เช็คชื่อ: ${formatDateThai(
-              activeCheckDate
-            )}`}
-            dateValue={activeCheckDate}
-            onDateChange={setActiveCheckDate}
-            buttonLabel="บันทึกวันที่เช็คชื่อ"
-            onButtonClick={saveActiveDate}
-            color="purple"
-          />
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="rounded-3xl bg-white p-6 shadow">
+            <h2 className="text-lg font-bold text-slate-800">
+              กำหนดวันที่เปิดให้เช็คชื่อ
+            </h2>
 
-          <DateCard
-            title="เลือกวันที่รายงาน"
-            description={`รายงานที่แสดง: ${formatDateThai(reportDate)}`}
-            dateValue={reportDate}
-            onDateChange={setReportDate}
-            buttonLabel="ดูรายงานวันที่เลือก"
-            onButtonClick={() => loadLogs(reportDate)}
-            color="emerald"
-          />
+            <p className="mt-2 text-sm text-slate-500">
+              วันที่ปัจจุบันที่เปิดให้เช็คชื่อ:{" "}
+              <b>{formatDateThai(activeCheckDate)}</b>
+            </p>
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <input
+                type="date"
+                value={activeCheckDate}
+                onChange={(e) => setActiveCheckDate(e.target.value)}
+                className="rounded-xl border border-slate-300 p-3 outline-none focus:border-slate-700"
+              />
+
+              <button
+                onClick={saveActiveDate}
+                className="cursor-pointer rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
+              >
+                บันทึกวันที่เช็คชื่อ
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-3xl bg-white p-6 shadow">
+            <h2 className="text-lg font-bold text-slate-800">
+              เลือกวันที่รายงาน
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-500">
+              รายงานที่แสดง: <b>{formatDateThai(reportDate)}</b>
+            </p>
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <input
+                type="date"
+                value={reportDate}
+                onChange={(e) => setReportDate(e.target.value)}
+                className="rounded-xl border border-slate-300 p-3 outline-none focus:border-slate-700"
+              />
+
+              <button
+                onClick={() => loadLogs(reportDate)}
+                className="cursor-pointer rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800"
+              >
+                ดูรายงานวันที่เลือก
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <TabButton
             active={tab === "dashboard"}
             label="Dashboard"
@@ -594,59 +599,68 @@ export default function AdminPage() {
 
         {tab === "dashboard" && (
           <>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-4">
               <SummaryCard title="บุคลากรทั้งหมด" value={summary.totalPeople} />
               <SummaryCard title="ครู" value={summary.teachers} />
               <SummaryCard title="เจ้าหน้าที่" value={summary.staff} />
               <SummaryCard title="เช็คชื่อเข้าแล้ว" value={summary.checkedIn} />
               <SummaryCard title="มาทำงานปกติ" value={summary.normal} />
-              <SummaryCard title="มาสาย" value={summary.late} danger />
+              <SummaryCard title="มาสาย" value={summary.late} />
               <SummaryCard title="เช็คออกแล้ว" value={summary.checkedOut} />
               <SummaryCard
                 title="ยังไม่เช็คออก"
                 value={summary.notCheckedOut}
-                warning
               />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <PieCard title="สัดส่วนบุคลากร" data={peoplePieData} colors={COLORS} />
-              <PieCard title="สถานะการมาทำงาน" data={statusPieData} colors={COLORS} />
-              <PieCard title="สถานะการเช็คชื่อออก" data={checkoutPieData} colors={COLORS} />
+              <PieCard
+                title="สัดส่วนบุคลากร"
+                data={peoplePieData}
+                colors={COLORS}
+              />
+              <PieCard
+                title="สถานะการมาทำงาน"
+                data={statusPieData}
+                colors={COLORS}
+              />
+              <PieCard
+                title="สถานะการเช็คชื่อออก"
+                data={checkoutPieData}
+                colors={COLORS}
+              />
             </div>
           </>
         )}
 
         {(tab === "teacher" || tab === "staff") && (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="overflow-hidden rounded-[28px] bg-white/95 shadow-2xl">
-              <div className="border-b border-purple-100 bg-purple-50 px-6 py-5">
-                <h2 className="text-xl font-bold text-purple-950">
-                  {editingId ? "แก้ไขรายชื่อ" : "เพิ่มรายชื่อ"}
-                </h2>
-              </div>
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="rounded-3xl bg-white p-6 shadow">
+              <h2 className="text-xl font-bold text-slate-800">
+                {editingId ? "แก้ไขรายชื่อ" : "เพิ่มรายชื่อ"}
+              </h2>
 
-              <div className="space-y-4 p-6">
+              <div className="mt-5 space-y-4">
                 <div>
-                  <label className="mb-2 block font-semibold text-purple-950">
+                  <label className="mb-2 block font-semibold text-slate-700">
                     ชื่อ-สกุล
                   </label>
                   <input
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full rounded-2xl border border-purple-200 bg-white px-4 py-3 outline-none transition focus:border-purple-800 focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-xl border border-slate-300 p-3 outline-none focus:border-slate-700"
                     placeholder="กรอกชื่อ-สกุล"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-2 block font-semibold text-purple-950">
+                  <label className="mb-2 block font-semibold text-slate-700">
                     {tab === "teacher" ? "แผนกวิชา" : "งาน"}
                   </label>
                   <input
                     value={unitName}
                     onChange={(e) => setUnitName(e.target.value)}
-                    className="w-full rounded-2xl border border-purple-200 bg-white px-4 py-3 outline-none transition focus:border-purple-800 focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-xl border border-slate-300 p-3 outline-none focus:border-slate-700"
                     placeholder={
                       tab === "teacher"
                         ? "เช่น เทคโนโลยีสารสนเทศ"
@@ -657,7 +671,7 @@ export default function AdminPage() {
 
                 <button
                   onClick={savePersonnel}
-                  className="w-full cursor-pointer rounded-2xl bg-purple-800 px-5 py-4 font-bold text-white shadow-lg transition hover:bg-purple-950"
+                  className="w-full cursor-pointer rounded-xl bg-emerald-600 p-3 font-bold text-white hover:bg-emerald-700"
                 >
                   {editingId ? "บันทึกการแก้ไข" : "เพิ่มข้อมูล"}
                 </button>
@@ -665,7 +679,7 @@ export default function AdminPage() {
                 {editingId && (
                   <button
                     onClick={resetForm}
-                    className="w-full cursor-pointer rounded-2xl bg-slate-200 px-5 py-4 font-bold text-slate-700 transition hover:bg-slate-300"
+                    className="w-full cursor-pointer rounded-xl bg-slate-200 p-3 font-bold text-slate-700 hover:bg-slate-300"
                   >
                     ยกเลิกการแก้ไข
                   </button>
@@ -673,23 +687,21 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[28px] bg-white/95 shadow-2xl lg:col-span-2">
-              <div className="border-b border-purple-100 bg-purple-50 px-6 py-5">
-                <h2 className="text-xl font-bold text-purple-950">
-                  {tab === "teacher" ? "รายชื่อครู" : "รายชื่อเจ้าหน้าที่"}
-                </h2>
-              </div>
+            <div className="rounded-3xl bg-white p-6 shadow lg:col-span-2">
+              <h2 className="text-xl font-bold text-slate-800">
+                {tab === "teacher" ? "รายชื่อครู" : "รายชื่อเจ้าหน้าที่"}
+              </h2>
 
-              <div className="overflow-x-auto p-6">
+              <div className="mt-5 overflow-x-auto">
                 <table className="w-full border-collapse text-sm">
                   <thead>
-                    <tr className="bg-purple-900 text-white">
-                      <th className="border border-purple-200 p-3">ลำดับ</th>
-                      <th className="border border-purple-200 p-3">ชื่อ-สกุล</th>
-                      <th className="border border-purple-200 p-3">
+                    <tr className="bg-slate-800 text-white">
+                      <th className="border p-3">ลำดับ</th>
+                      <th className="border p-3">ชื่อ-สกุล</th>
+                      <th className="border p-3">
                         {tab === "teacher" ? "แผนกวิชา" : "งาน"}
                       </th>
-                      <th className="border border-purple-200 p-3">จัดการ</th>
+                      <th className="border p-3">จัดการ</th>
                     </tr>
                   </thead>
 
@@ -702,8 +714,10 @@ export default function AdminPage() {
                       </tr>
                     ) : (
                       filteredPeople.map((person, index) => (
-                        <tr key={person.id} className="bg-white hover:bg-purple-50">
-                          <td className="border p-3 text-center">{index + 1}</td>
+                        <tr key={person.id} className="hover:bg-slate-50">
+                          <td className="border p-3 text-center">
+                            {index + 1}
+                          </td>
                           <td className="border p-3 font-medium">
                             {person.full_name}
                           </td>
@@ -712,13 +726,13 @@ export default function AdminPage() {
                             <div className="flex justify-center gap-2">
                               <button
                                 onClick={() => editPersonnel(person)}
-                                className="cursor-pointer rounded-xl bg-amber-500 px-3 py-2 font-bold text-white hover:bg-amber-600"
+                                className="cursor-pointer rounded-lg bg-amber-500 px-3 py-2 font-bold text-white hover:bg-amber-600"
                               >
                                 แก้ไข
                               </button>
                               <button
                                 onClick={() => deletePersonnel(person.id)}
-                                className="cursor-pointer rounded-xl bg-red-600 px-3 py-2 font-bold text-white hover:bg-red-700"
+                                className="cursor-pointer rounded-lg bg-red-600 px-3 py-2 font-bold text-white hover:bg-red-700"
                               >
                                 ลบ
                               </button>
@@ -735,29 +749,29 @@ export default function AdminPage() {
         )}
 
         {tab === "report" && (
-          <div className="overflow-hidden rounded-[28px] bg-white/95 shadow-2xl">
-            <div className="flex flex-col gap-3 border-b border-purple-100 bg-purple-50 px-6 py-5 md:flex-row md:items-center md:justify-between">
+          <div className="mt-6 rounded-3xl bg-white p-6 shadow">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-xl font-bold text-purple-950">
+                <h2 className="text-xl font-bold text-slate-800">
                   รายงานการเช็คชื่อ
                 </h2>
-                <p className="text-sm text-purple-700">
+                <p className="text-sm text-slate-500">
                   วันที่รายงาน: {formatDateThai(reportDate)}
                 </p>
               </div>
 
               <button
                 onClick={() => loadLogs(reportDate)}
-                className="cursor-pointer rounded-2xl bg-purple-800 px-5 py-3 font-bold text-white hover:bg-purple-950"
+                className="cursor-pointer rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
               >
                 รีเฟรชรายงาน
               </button>
             </div>
 
-            <div className="overflow-x-auto p-6">
+            <div className="mt-5 overflow-x-auto">
               <table className="w-full border-collapse text-sm">
                 <thead>
-                  <tr className="bg-purple-900 text-white">
+                  <tr className="bg-slate-800 text-white">
                     <th className="border p-3">ลำดับ</th>
                     <th className="border p-3">ชื่อ-สกุล</th>
                     <th className="border p-3">ประเภท</th>
@@ -766,6 +780,8 @@ export default function AdminPage() {
                     <th className="border p-3">อีเมลเช็คออก</th>
                     <th className="border p-3">เวลาเข้า</th>
                     <th className="border p-3">เวลาออก</th>
+                    <th className="border p-3">วันเวลาเข้า</th>
+                    <th className="border p-3">วันเวลาออก</th>
                     <th className="border p-3">สถานะการมาทำงาน</th>
                     <th className="border p-3">สถานะเช็คออก</th>
                   </tr>
@@ -774,13 +790,13 @@ export default function AdminPage() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={10} className="border p-6 text-center">
+                      <td colSpan={12} className="border p-6 text-center">
                         กำลังโหลดข้อมูล...
                       </td>
                     </tr>
                   ) : logs.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="border p-6 text-center">
+                      <td colSpan={12} className="border p-6 text-center">
                         ยังไม่มีข้อมูลเช็คชื่อในวันที่เลือก
                       </td>
                     </tr>
@@ -789,36 +805,55 @@ export default function AdminPage() {
                       const status = getWorkStatus(log.check_in_at);
 
                       return (
-                        <tr key={log.id} className="bg-white hover:bg-purple-50">
-                          <td className="border p-3 text-center">{index + 1}</td>
+                        <tr key={log.id} className="hover:bg-slate-50">
+                          <td className="border p-3 text-center">
+                            {index + 1}
+                          </td>
+
                           <td className="border p-3 font-medium">
                             {log.full_name_snapshot}
                           </td>
+
                           <td className="border p-3 text-center">
                             {log.category_snapshot === "teacher"
                               ? "ครู"
                               : "เจ้าหน้าที่"}
                           </td>
+
                           <td className="border p-3">
                             {log.unit_name_snapshot}
                           </td>
+
                           <td className="border p-3">
                             {log.login_email || "-"}
                           </td>
+
                           <td className="border p-3">
                             {log.check_out_email || "-"}
                           </td>
+
                           <td className="border p-3 text-center">
                             {formatTime(log.check_in_at)}
                           </td>
+
                           <td className="border p-3 text-center">
                             {formatTime(log.check_out_at)}
                           </td>
+
+                          <td className="border p-3 text-center">
+                            {formatDateTime(log.check_in_at)}
+                          </td>
+
+                          <td className="border p-3 text-center">
+                            {formatDateTime(log.check_out_at)}
+                          </td>
+
                           <td className="border p-3 text-center">
                             <span className={status.className}>
                               {status.text}
                             </span>
                           </td>
+
                           <td className="border p-3 text-center">
                             {log.check_out_at ? (
                               <span className="rounded-full bg-emerald-100 px-3 py-1 text-emerald-700">
@@ -840,57 +875,14 @@ export default function AdminPage() {
           </div>
         )}
 
-        <div className="mt-8 text-center text-sm text-white/80">
-          <p className="font-semibold">ผู้พัฒนา: ครูคณิน สัจจารักษ์</p>
+        <div className="mt-8 text-center text-sm text-slate-500">
+          <p className="font-semibold text-slate-700">
+            ผู้พัฒนา: ครูคณิน สัจจารักษ์
+          </p>
           <p>แผนกวิชาเทคโนโลยีสารสนเทศ</p>
         </div>
       </div>
     </main>
-  );
-}
-
-function DateCard({
-  title,
-  description,
-  dateValue,
-  onDateChange,
-  buttonLabel,
-  onButtonClick,
-  color,
-}: {
-  title: string;
-  description: string;
-  dateValue: string;
-  onDateChange: (value: string) => void;
-  buttonLabel: string;
-  onButtonClick: () => void;
-  color: "purple" | "emerald";
-}) {
-  return (
-    <div className="rounded-[28px] bg-white/95 p-6 shadow-2xl">
-      <h2 className="text-lg font-bold text-purple-950">{title}</h2>
-      <p className="mt-2 text-sm text-slate-500">{description}</p>
-
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-        <input
-          type="date"
-          value={dateValue}
-          onChange={(e) => onDateChange(e.target.value)}
-          className="rounded-2xl border border-purple-200 bg-white px-4 py-3 outline-none focus:border-purple-800 focus:ring-2 focus:ring-purple-200"
-        />
-
-        <button
-          onClick={onButtonClick}
-          className={`cursor-pointer rounded-2xl px-5 py-3 font-bold text-white shadow-lg transition ${
-            color === "purple"
-              ? "bg-purple-800 hover:bg-purple-950"
-              : "bg-emerald-600 hover:bg-emerald-700"
-          }`}
-        >
-          {buttonLabel}
-        </button>
-      </div>
-    </div>
   );
 }
 
@@ -906,10 +898,8 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`cursor-pointer rounded-2xl px-5 py-3 font-bold shadow-lg transition ${
-        active
-          ? "bg-white text-purple-950"
-          : "bg-white/20 text-white hover:bg-white/30"
+      className={`cursor-pointer rounded-xl px-5 py-3 font-bold shadow ${
+        active ? "bg-slate-800 text-white" : "bg-white text-slate-700"
       }`}
     >
       {label}
@@ -917,31 +907,11 @@ function TabButton({
   );
 }
 
-function SummaryCard({
-  title,
-  value,
-  danger,
-  warning,
-}: {
-  title: string;
-  value: number;
-  danger?: boolean;
-  warning?: boolean;
-}) {
+function SummaryCard({ title, value }: { title: string; value: number }) {
   return (
-    <div className="rounded-[28px] bg-white/95 p-5 shadow-2xl transition hover:-translate-y-0.5">
+    <div className="rounded-2xl bg-white p-5 shadow">
       <p className="text-sm font-medium text-slate-500">{title}</p>
-      <p
-        className={`mt-2 text-3xl font-bold ${
-          danger
-            ? "text-red-600"
-            : warning
-            ? "text-amber-600"
-            : "text-purple-950"
-        }`}
-      >
-        {value}
-      </p>
+      <p className="mt-2 text-3xl font-bold text-slate-800">{value}</p>
     </div>
   );
 }
@@ -956,8 +926,8 @@ function PieCard({
   colors: string[];
 }) {
   return (
-    <div className="rounded-[28px] bg-white/95 p-6 shadow-2xl">
-      <h2 className="text-lg font-bold text-purple-950">{title}</h2>
+    <div className="rounded-3xl bg-white p-6 shadow">
+      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
 
       <div className="mt-4 h-72">
         <ResponsiveContainer width="100%" height="100%">
