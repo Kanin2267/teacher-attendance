@@ -614,9 +614,9 @@ export default function Home() {
             )}
           </div>
           <div className="mt-5 text-center text-sm text-slate-500">
-            <p>เช็คชื่อเข้าได้ตั้งแต่เวลา 05.00 น. โดยอ้างอิงเวลา Server</p>
-            <p>เช็คชื่อออกได้เฉพาะเวลา 16.00–20.30 น. โดยอ้างอิงเวลา Server</p>
-            <p>วันที่เช็คชื่ออ้างอิงจากวันที่จริงของ Server เท่านั้น</p>
+            <p>เช็คชื่อเข้าได้ตั้งแต่เวลา 05.00 น. </p>
+            <p>เช็คชื่อออกได้เฉพาะเวลา 16.00–20.30 น.</p>
+            <p>วันที่เช็คชื่ออ้างอิงจากเวลา Server </p>
 
             <div className="mt-4 border-t border-slate-200 pt-4">
               <p className="font-semibold text-slate-700">
