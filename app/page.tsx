@@ -18,6 +18,7 @@ type RpcResult = {
   status: string;
   message: string;
   server_time: string;
+  check_date?: string;
 };
 
 type ClockBase = {
@@ -34,7 +35,6 @@ export default function Home() {
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [clockBase, setClockBase] = useState<ClockBase | null>(null);
-  const [activeCheckDate, setActiveCheckDate] = useState("");
 
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -78,25 +78,9 @@ export default function Home() {
     setPeople(data || []);
   };
 
-  const loadActiveDate = async () => {
-    const { data, error } = await supabase
-      .from("attendance_settings")
-      .select("active_check_date")
-      .eq("id", 1)
-      .single();
-
-    if (error) {
-      setMessage("โหลดวันที่เช็คชื่อไม่สำเร็จ: " + error.message);
-      return;
-    }
-
-    setActiveCheckDate(data.active_check_date);
-  };
-
   useEffect(() => {
     loadServerClock();
     loadPeople();
-    loadActiveDate();
   }, []);
 
   useEffect(() => {
@@ -189,6 +173,15 @@ export default function Home() {
     window.location.href = "/";
   };
 
+  const getBangkokDateValue = (date: Date) => {
+    return date.toLocaleDateString("en-CA", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  };
+
   const getBangkokTimeText = (dateValue: string | Date) => {
     const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
 
@@ -216,15 +209,13 @@ export default function Home() {
     hour12: false,
   });
 
-  const activeDateText = activeCheckDate
-    ? new Date(activeCheckDate + "T00:00:00").toLocaleDateString("th-TH", {
-        timeZone: "Asia/Bangkok",
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "-";
+  const activeDateText = currentTime.toLocaleDateString("th-TH", {
+    timeZone: "Asia/Bangkok",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   const checkIn = async () => {
     setMessage("");
@@ -241,21 +232,18 @@ export default function Home() {
       return;
     }
 
-    if (!activeCheckDate) {
-      setMessage("ยังไม่ได้กำหนดวันที่เช็คชื่อ");
-      return;
-    }
-
     if (!selectedPerson) {
       setMessage("กรุณาค้นหาและเลือกรายชื่อก่อนเช็คชื่อเข้า");
       return;
     }
 
+    const checkDate = getBangkokDateValue(currentTime);
+
     setLoading(true);
 
     const { data, error } = await supabase.rpc("check_in_attendance", {
       p_personnel_id: selectedPerson.id,
-      p_check_date: activeCheckDate,
+      p_check_date: checkDate,
       p_login_email: user.email,
       p_login_user_id: user.id,
     });
@@ -283,6 +271,14 @@ export default function Home() {
       setSearch("");
       setSelectedPerson(null);
       loadServerClock();
+      return;
+    }
+
+    if (result.status === "too_early_in") {
+      alert(
+        "เช็คชื่อออนไลน์\nยังไม่ถึงเวลาเช็คชื่อเข้า กรุณาเช็คชื่อหลังเวลา 05.00 น."
+      );
+      setMessage("ยังไม่ถึงเวลาเช็คชื่อเข้า กรุณาเช็คชื่อหลังเวลา 05.00 น.");
       return;
     }
 
@@ -325,21 +321,18 @@ export default function Home() {
       return;
     }
 
-    if (!activeCheckDate) {
-      setMessage("ยังไม่ได้กำหนดวันที่เช็คชื่อ");
-      return;
-    }
-
     if (!selectedPerson) {
       setMessage("กรุณาค้นหาและเลือกรายชื่อก่อนเช็คชื่อออก");
       return;
     }
 
+    const checkDate = getBangkokDateValue(currentTime);
+
     setLoading(true);
 
     const { data, error } = await supabase.rpc("check_out_attendance", {
       p_personnel_id: selectedPerson.id,
-      p_check_date: activeCheckDate,
+      p_check_date: checkDate,
       p_check_out_email: user.email,
       p_check_out_user_id: user.id,
     });
@@ -622,8 +615,9 @@ export default function Home() {
           </div>
 
           <div className="mt-5 text-center text-sm text-slate-500">
+            <p>เช็คชื่อเข้าได้ตั้งแต่เวลา 05.00–20.30 น. โดยอ้างอิงเวลา Server</p>
             <p>เช็คชื่อออกได้เฉพาะเวลา 16.00–20.30 น. โดยอ้างอิงเวลา Server</p>
-            <p>หลังเวลา 20.30 น. ไม่สามารถเช็คชื่อเข้าและเช็คชื่อออกได้</p>
+            <p>วันที่เช็คชื่ออ้างอิงจากวันที่จริงของ Server เท่านั้น</p>
 
             <div className="mt-4 border-t border-slate-200 pt-4">
               <p className="font-semibold text-slate-700">

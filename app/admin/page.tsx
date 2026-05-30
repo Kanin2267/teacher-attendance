@@ -54,8 +54,6 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
-
-  const [activeCheckDate, setActiveCheckDate] = useState("");
   const [reportDate, setReportDate] = useState("");
 
   const handleLogin = () => {
@@ -77,45 +75,8 @@ export default function AdminPage() {
   };
 
   const loadSetting = async () => {
-    const { data, error } = await supabase
-      .from("attendance_settings")
-      .select("active_check_date")
-      .eq("id", 1)
-      .single();
-
-    if (error) {
-      const today = getTodayBangkok();
-      setActiveCheckDate(today);
-      setReportDate(today);
-      return;
-    }
-
-    setActiveCheckDate(data.active_check_date);
-    setReportDate((current) => current || data.active_check_date);
-  };
-
-  const saveActiveDate = async () => {
-    if (!activeCheckDate) {
-      alert("กรุณาเลือกวันที่");
-      return;
-    }
-
-    const { error } = await supabase
-      .from("attendance_settings")
-      .update({
-        active_check_date: activeCheckDate,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", 1);
-
-    if (error) {
-      alert("บันทึกวันที่ไม่สำเร็จ: " + error.message);
-      return;
-    }
-
-    alert("บันทึกวันที่เปิดให้เช็คชื่อเรียบร้อยแล้ว");
-    setReportDate(activeCheckDate);
-    loadLogs(activeCheckDate);
+    const today = getTodayBangkok();
+    setReportDate((current) => current || today);
   };
 
   const loadPeople = async () => {
@@ -135,9 +96,7 @@ export default function AdminPage() {
   };
 
   const loadLogs = async (dateValue?: string) => {
-    const selectedDate = dateValue || reportDate || activeCheckDate;
-
-    if (!selectedDate) return;
+    const selectedDate = dateValue || reportDate || getTodayBangkok();
 
     setLoading(true);
 
@@ -163,7 +122,7 @@ export default function AdminPage() {
     await loadSetting();
     await loadPeople();
 
-    const dateToLoad = reportDate || activeCheckDate || getTodayBangkok();
+    const dateToLoad = reportDate || getTodayBangkok();
     await loadLogs(dateToLoad);
 
     setLoading(false);
@@ -446,7 +405,7 @@ export default function AdminPage() {
               เข้าสู่ระบบผู้ดูแล
             </h1>
             <p className="mt-2 text-sm text-slate-500">
-              ระบบรายงานการเช็คชื่อครูและเจ้าหน้าที่
+              ระบบรายงานการเข้าออกออนไลน์
             </p>
           </div>
 
@@ -479,6 +438,13 @@ export default function AdminPage() {
               เข้าสู่ระบบ
             </button>
           </div>
+
+          <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm text-slate-500">
+            <p className="font-semibold text-slate-700">
+              ผู้พัฒนา: ครูคณิน สัจจารักษ์
+            </p>
+            <p>แผนกวิชาเทคโนโลยีสารสนเทศ</p>
+          </div>
         </div>
       </main>
     );
@@ -494,10 +460,13 @@ export default function AdminPage() {
                 ADMIN DASHBOARD
               </p>
               <h1 className="mt-1 text-2xl font-bold">
-                ระบบจัดการข้อมูลบุคลากรและรายงานเช็คชื่อ
+                ระบบจัดการข้อมูลบุคลากรและรายงานเข้าออก
               </h1>
               <p className="mt-1 text-slate-300">
                 วิทยาลัยอาชีวศึกษาธนบุรี
+              </p>
+              <p className="mt-1 text-sm text-slate-400">
+                การเช็คชื่อของผู้ใช้จะอ้างอิงจากวันที่จริงของ Server เท่านั้น
               </p>
             </div>
 
@@ -519,34 +488,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="rounded-3xl bg-white p-6 shadow">
-            <h2 className="text-lg font-bold text-slate-800">
-              กำหนดวันที่เปิดให้เช็คชื่อ
-            </h2>
-
-            <p className="mt-2 text-sm text-slate-500">
-              วันที่ปัจจุบันที่เปิดให้เช็คชื่อ:{" "}
-              <b>{formatDateThai(activeCheckDate)}</b>
-            </p>
-
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <input
-                type="date"
-                value={activeCheckDate}
-                onChange={(e) => setActiveCheckDate(e.target.value)}
-                className="rounded-xl border border-slate-300 p-3 outline-none focus:border-slate-700"
-              />
-
-              <button
-                onClick={saveActiveDate}
-                className="cursor-pointer rounded-xl bg-slate-800 px-5 py-3 font-bold text-white hover:bg-slate-900"
-              >
-                บันทึกวันที่เช็คชื่อ
-              </button>
-            </div>
-          </div>
-
+        <div className="mt-6 grid grid-cols-1 gap-4">
           <div className="rounded-3xl bg-white p-6 shadow">
             <h2 className="text-lg font-bold text-slate-800">
               เลือกวันที่รายงาน
@@ -571,6 +513,11 @@ export default function AdminPage() {
                 ดูรายงานวันที่เลือก
               </button>
             </div>
+
+            <p className="mt-3 text-sm text-slate-500">
+              หมายเหตุ: Admin เลือกวันที่สำหรับดูรายงานและ Export Excel ได้เท่านั้น
+              ไม่สามารถกำหนดวันที่เช็คชื่อแทนระบบได้
+            </p>
           </div>
         </div>
 
@@ -605,30 +552,19 @@ export default function AdminPage() {
               <SummaryCard title="เจ้าหน้าที่" value={summary.staff} />
               <SummaryCard title="เช็คชื่อเข้าแล้ว" value={summary.checkedIn} />
               <SummaryCard title="มาทำงานปกติ" value={summary.normal} />
-              <SummaryCard title="มาสาย" value={summary.late} />
+              <SummaryCard title="มาสาย" value={summary.late} danger />
               <SummaryCard title="เช็คออกแล้ว" value={summary.checkedOut} />
               <SummaryCard
                 title="ยังไม่เช็คออก"
                 value={summary.notCheckedOut}
+                warning
               />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <PieCard
-                title="สัดส่วนบุคลากร"
-                data={peoplePieData}
-                colors={COLORS}
-              />
-              <PieCard
-                title="สถานะการมาทำงาน"
-                data={statusPieData}
-                colors={COLORS}
-              />
-              <PieCard
-                title="สถานะการเช็คชื่อออก"
-                data={checkoutPieData}
-                colors={COLORS}
-              />
+              <PieCard title="สัดส่วนบุคลากร" data={peoplePieData} colors={COLORS} />
+              <PieCard title="สถานะการมาทำงาน" data={statusPieData} colors={COLORS} />
+              <PieCard title="สถานะการเช็คชื่อออก" data={checkoutPieData} colors={COLORS} />
             </div>
           </>
         )}
@@ -780,8 +716,6 @@ export default function AdminPage() {
                     <th className="border p-3">อีเมลเช็คออก</th>
                     <th className="border p-3">เวลาเข้า</th>
                     <th className="border p-3">เวลาออก</th>
-                    <th className="border p-3">วันเวลาเข้า</th>
-                    <th className="border p-3">วันเวลาออก</th>
                     <th className="border p-3">สถานะการมาทำงาน</th>
                     <th className="border p-3">สถานะเช็คออก</th>
                   </tr>
@@ -790,13 +724,13 @@ export default function AdminPage() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={12} className="border p-6 text-center">
+                      <td colSpan={10} className="border p-6 text-center">
                         กำลังโหลดข้อมูล...
                       </td>
                     </tr>
                   ) : logs.length === 0 ? (
                     <tr>
-                      <td colSpan={12} className="border p-6 text-center">
+                      <td colSpan={10} className="border p-6 text-center">
                         ยังไม่มีข้อมูลเช็คชื่อในวันที่เลือก
                       </td>
                     </tr>
@@ -809,51 +743,34 @@ export default function AdminPage() {
                           <td className="border p-3 text-center">
                             {index + 1}
                           </td>
-
                           <td className="border p-3 font-medium">
                             {log.full_name_snapshot}
                           </td>
-
                           <td className="border p-3 text-center">
                             {log.category_snapshot === "teacher"
                               ? "ครู"
                               : "เจ้าหน้าที่"}
                           </td>
-
                           <td className="border p-3">
                             {log.unit_name_snapshot}
                           </td>
-
                           <td className="border p-3">
                             {log.login_email || "-"}
                           </td>
-
                           <td className="border p-3">
                             {log.check_out_email || "-"}
                           </td>
-
                           <td className="border p-3 text-center">
                             {formatTime(log.check_in_at)}
                           </td>
-
                           <td className="border p-3 text-center">
                             {formatTime(log.check_out_at)}
                           </td>
-
-                          <td className="border p-3 text-center">
-                            {formatDateTime(log.check_in_at)}
-                          </td>
-
-                          <td className="border p-3 text-center">
-                            {formatDateTime(log.check_out_at)}
-                          </td>
-
                           <td className="border p-3 text-center">
                             <span className={status.className}>
                               {status.text}
                             </span>
                           </td>
-
                           <td className="border p-3 text-center">
                             {log.check_out_at ? (
                               <span className="rounded-full bg-emerald-100 px-3 py-1 text-emerald-700">
@@ -907,11 +824,31 @@ function TabButton({
   );
 }
 
-function SummaryCard({ title, value }: { title: string; value: number }) {
+function SummaryCard({
+  title,
+  value,
+  danger,
+  warning,
+}: {
+  title: string;
+  value: number;
+  danger?: boolean;
+  warning?: boolean;
+}) {
   return (
     <div className="rounded-2xl bg-white p-5 shadow">
       <p className="text-sm font-medium text-slate-500">{title}</p>
-      <p className="mt-2 text-3xl font-bold text-slate-800">{value}</p>
+      <p
+        className={`mt-2 text-3xl font-bold ${
+          danger
+            ? "text-red-600"
+            : warning
+            ? "text-amber-600"
+            : "text-slate-800"
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
